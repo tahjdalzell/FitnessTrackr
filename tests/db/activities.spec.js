@@ -15,7 +15,7 @@ const {
 const { createFakeActivity } = require("../helpers");
 
 describe("DB Activities", () => {
-  describe("createActivity({ name, description })", () => {
+  describe.only("createActivity({ name, description })", () => {
     xit("Creates and returns the new activity", async () => {
       const activityToCreate = {
         name: "Marathon",

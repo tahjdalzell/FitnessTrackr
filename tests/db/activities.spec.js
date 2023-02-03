@@ -14,8 +14,9 @@ const {
 } = require("../../db");
 const { createFakeActivity } = require("../helpers");
 
+
 describe("DB Activities", () => {
-  describe.only("createActivity({ name, description })", () => {
+  describe("createActivity({ name, description })", () => {
     xit("Creates and returns the new activity", async () => {
       const activityToCreate = {
         name: "Marathon",
@@ -28,7 +29,7 @@ describe("DB Activities", () => {
   });
 
   describe("getAllActivities", () => {
-    xit("Selects and returns an array of all activities", async () => {
+    it("Selects and returns an array of all activities", async () => {
       await createFakeActivity("Sit ups", "Do 100 reps");
       const activities = await getAllActivities();
       const { rows: activitiesFromDatabase } = await client.query(`

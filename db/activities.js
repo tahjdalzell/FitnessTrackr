@@ -16,6 +16,7 @@ async function createActivity({ name, description }) {
 
     return activities;
   } catch (error) {
+    console.log("Error : Failed to create Activity");
     throw error;
   }
 }
@@ -46,16 +47,59 @@ async function getActivityById(id) {
   }
 }
 
-async function getActivityByName(name) {}
+async function getActivityByName(name) {
+  try {
+    const {
+      rows: [activity],
+    } = await client.query(`SELECT * FROM activities WHERE name = $1`, [name]);
+
+    return activity;
+  } catch (error) {
+    console.error(`Error retrieving activity by name: ${error.message}`);
+    throw error;
+  }
+}
 
 async function attachActivitiesToRoutines(routines) {
-  // select and return an array of all activities
+  try {
+    const activities = await client.query(`SELECT * FROM activities`);
+
+    const updatedRoutines = routines.map((routine) => {
+      const routineActivities = activities.filter(
+        (activity) => activity.routineId === routine.id
+      );
+
+      return {
+        ...routine,
+        activities: routineActivities,
+      };
+    });
+
+    return updatedRoutines;
+  } catch (error) {
+    console.error(`Error attaching activities to routines: ${error.message}`);
+    throw error;
+  }
 }
 
 async function updateActivity({ id, ...fields }) {
-  // don't try to update the id
-  // do update the name and description
-  // return the updated activity
+  try {
+    const setFields = Object.entries(fields)
+      .map(([key], index) => `${key} = $${index + 2}`)
+      .join(", ");
+
+    const {
+      rows: [updatedActivity],
+    } = await client.query(
+      `UPDATE activities SET ${setFields} WHERE id = $1 RETURNING *`,
+      [id, ...Object.values(fields)]
+    );
+
+    return updatedActivity;
+  } catch (error) {
+    console.error(`Error updating activity: ${error.message}`);
+    throw error;
+  }
 }
 
 module.exports = {

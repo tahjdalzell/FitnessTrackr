@@ -16,7 +16,7 @@ const { createFakeActivity } = require("../helpers");
 
 describe("DB Activities", () => {
   describe("createActivity({ name, description })", () => {
-    xit("Creates and returns the new activity", async () => {
+    it("Creates and returns the new activity", async () => {
       const activityToCreate = {
         name: "Marathon",
         description: "Run all the miles",
@@ -49,7 +49,7 @@ describe("DB Activities", () => {
   });
 
   describe("getActivityByName", () => {
-    xit("Gets an activity by it's name", async () => {
+    it("Gets an activity by it's name", async () => {
       const fakeActivity = await createFakeActivity(
         "Power Walking",
         "At the mall"
@@ -60,7 +60,7 @@ describe("DB Activities", () => {
   });
 
   describe("updateActivity", () => {
-    xit("Updates name without affecting the ID. Returns the updated Activity.", async () => {
+    it("Updates name without affecting the ID. Returns the updated Activity.", async () => {
       const fakeActivity = await createFakeActivity(
         "Baseball",
         "Run the bases"
@@ -75,7 +75,7 @@ describe("DB Activities", () => {
       expect(updatedActivity.description).toEqual(fakeActivity.description);
     });
 
-    xit("Updates description without affecting the ID. Returns the updated Activity.", async () => {
+    it("Updates description without affecting the ID. Returns the updated Activity.", async () => {
       const fakeActivity = await createFakeActivity("Soccer", "After school");
       const description = "Football is life!";
       const updatedActivity = await updateActivity({

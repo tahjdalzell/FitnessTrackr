@@ -66,7 +66,7 @@ async function getRoutineActivitiesByRoutine({ id }) {
 async function updateRoutineActivity({ id, ...fields }) {
   try {
     const setFields = Object.entries(fields)
-      .map(([key, value], index) => `${key} = $${index + 2}`)
+      .map(([key], index) => `${key} = $${index + 2}`)
       .join(", ");
     const {
       rows: [updatedRoutineActivity],
@@ -99,13 +99,14 @@ async function canEditRoutineActivity(routineActivityId, userId) {
   try {
     const {
       rows: [routineActivity],
-    } = await client.query(`SELECT * FROM routine_activities WHERE id = $1`, [
+    } = await client.query(`SELECT * FROM routine_activities WHERE id = $1;`, [
       routineActivityId,
     ]);
-
-    return routineActivity.creatorId === userId;
+    // Assuming that a routine activity is editable if the user who created it is the same as the user who wants to edit it.
+    const canEdit = routineActivity.id === userId;
+    return canEdit;
   } catch (error) {
-    console.log("Error Editing Routine Activity");
+    console.error("Error Editing Routine Activity");
     throw error;
   }
 }

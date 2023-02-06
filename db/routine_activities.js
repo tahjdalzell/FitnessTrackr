@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 const client = require("./client");
 
 async function addActivityToRoutine({
@@ -16,7 +17,7 @@ async function addActivityToRoutine({
       `,
       [routineId, activityId, count, duration]
     );
-    
+
     return routineActivities;
   } catch (error) {
     console.error("Error adding activity to routine!");
@@ -24,16 +25,90 @@ async function addActivityToRoutine({
   }
 }
 
-async function getRoutineActivityById(id) {}
+async function getRoutineActivityById(id) {
+  // eslint-disable-next-line no-useless-catch
+  try {
+    const {
+      rows: [routineActivity],
+    } = await client.query(
+      `
+      SELECT * FROM routine_activities
+      WHERE id = $1;
+    `,
+      [id]
+    );
 
-async function getRoutineActivitiesByRoutine({ id }) {}
+    return routineActivity;
+  } catch (error) {
+    console.error("Error getting routine activity by ID!");
+    throw error;
+  }
+}
 
-async function updateRoutineActivity({ id, ...fields }) {}
+async function getRoutineActivitiesByRoutine({ id }) {
+  // eslint-disable-next-line no-useless-catch
+  try {
+    const { rows: routineActivities } = await client.query(
+      `
+      SELECT * FROM routine_activities
+      WHERE "routineId" = $1;
+    `,
+      [id]
+    );
 
-async function destroyRoutineActivity(id) {}
+    return routineActivities;
+  } catch (error) {
+    console.error("Error getting Activites by Routine");
+    throw error;
+  }
+}
 
-async function canEditRoutineActivity(routineActivityId, userId) {}
+async function updateRoutineActivity({ id, ...fields }) {
+  try {
+    const setFields = Object.entries(fields)
+      .map(([key, value], index) => `${key} = $${index + 2}`)
+      .join(", ");
+    const {
+      rows: [updatedRoutineActivity],
+    } = await client.query(
+      `UPDATE routine_activities SET ${setFields} WHERE id = $1 RETURNING *`,
+      [id, ...Object.values(fields)]
+    );
+    return updatedRoutineActivity;
+  } catch (error) {
+    console.error("Error updating routine activity!");
+    throw error;
+  }
+}
 
+async function destroyRoutineActivity(id) {
+  try {
+    const {
+      rows: [deletedRoutineActivity],
+    } = await client.query(
+      `DELETE FROM routine_activities WHERE id = $1 RETURNING *`,
+      [id]
+    );
+    return deletedRoutineActivity;
+  } catch (error) {
+    console.error("Error deleting routine activity!");
+    throw error;
+  }
+}
+async function canEditRoutineActivity(routineActivityId, userId) {
+  try {
+    const {
+      rows: [routineActivity],
+    } = await client.query(`SELECT * FROM routine_activities WHERE id = $1`, [
+      routineActivityId,
+    ]);
+
+    return routineActivity.creatorId === userId;
+  } catch (error) {
+    console.log("Error Editing Routine Activity");
+    throw error;
+  }
+}
 module.exports = {
   getRoutineActivityById,
   addActivityToRoutine,

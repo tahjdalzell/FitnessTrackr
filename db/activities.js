@@ -34,7 +34,17 @@ async function getAllActivities() {
   }
 }
 
-async function getActivityById(id) {}
+async function getActivityById(id) {
+  try {
+    const {
+      rows: [activity],
+    } = await client.query(`SELECT * FROM activities WHERE id = $1`, [id]);
+    return activity;
+  } catch (error) {
+    console.error(`Error getting activity with id ${id}`);
+    throw error;
+  }
+}
 
 async function getActivityByName(name) {}
 

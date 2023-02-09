@@ -88,7 +88,6 @@ async function getAllRoutines() {
         (routineActivity) => routineActivity.routineId === routine.id
       );
     });
-    // console.log("db", routines);
 
     return routines;
   } catch (error) {
@@ -97,13 +96,184 @@ async function getAllRoutines() {
   }
 }
 
-async function getAllPublicRoutines() {}
+async function getAllPublicRoutines() {
+  try {
+    const { rows: routines } = await client.query(`
+      SELECT 
+        routines.id, 
+        routines."isPublic",
+        routines."creatorId", 
+        routines.name, 
+        routines.goal, 
+        users.username AS "creatorName" 
+      FROM 
+        routines 
+      LEFT JOIN 
+        users 
+      ON 
+        routines."creatorId" = users.id
+      WHERE 
+        routines."isPublic" = true
+    `);
 
-async function getAllRoutinesByUser({ username }) {}
+    const { rows: routineActivities } = await client.query(`
+      SELECT 
+        routine_activities.id AS "routineActivityId", 
+        routine_activities."routineId", 
+        routine_activities."activityId"
+        AS id, 
+        routine_activities.duration, 
+        routine_activities.count, 
+        activities.name, 
+        activities.description
+      FROM 
+        routine_activities 
+      LEFT JOIN 
+        activities 
+      ON 
+        routine_activities."activityId" = activities.id
+    `);
 
-async function getPublicRoutinesByUser({ username }) {}
+    routines.forEach((routine) => {
+      routine.activities = routineActivities.filter(
+        (routineActivity) => routineActivity.routineId === routine.id
+      );
+    });
 
-async function getPublicRoutinesByActivity({ id }) {}
+    return routines;
+  } catch (error) {
+    console.error("Error getting public routines!");
+    throw error;
+  }
+}
+
+async function getAllRoutinesByUser({ username }) {
+  try {
+    const { rows: routines } = await client.query(
+      `
+      SELECT 
+        routines.id, 
+        routines."isPublic",
+        routines."creatorId", 
+        routines.name, 
+        routines.goal, 
+        users.username AS "creatorName" 
+      FROM 
+        routines 
+      LEFT JOIN 
+        users 
+      ON 
+        routines."creatorId" = users.id
+      WHERE 
+        
+        users.username = $1
+    `,
+      [username]
+    );
+
+    const { rows: routineActivities } = await client.query(`
+      SELECT 
+        routine_activities.id AS "routineActivityId", 
+        routine_activities."routineId", 
+        routine_activities."activityId"
+        AS id, 
+        routine_activities.duration, 
+        routine_activities.count, 
+        activities.name, 
+        activities.description
+      FROM 
+        routine_activities 
+      LEFT JOIN 
+        activities 
+      ON 
+        routine_activities."activityId" = activities.id
+    `);
+
+    routines.forEach((routine) => {
+      routine.activities = routineActivities.filter(
+        (routineActivity) => routineActivity.routineId === routine.id
+      );
+    });
+
+    return routines;
+  } catch (error) {
+    console.error("Error getting routines for user!");
+    throw error;
+  }
+}
+
+async function getPublicRoutinesByUser({ username }) {
+  try {
+    const { rows: routines } = await client.query(
+      `
+      SELECT 
+        routines.id, 
+        routines."isPublic",
+        routines."creatorId", 
+        routines.name, 
+        routines.goal, 
+        users.username AS "creatorName" 
+      FROM 
+        routines 
+      LEFT JOIN 
+        users 
+      ON 
+        routines."creatorId" = users.id
+      WHERE 
+        routines."isPublic" = true AND 
+        users.username = $1
+    `,
+      [username]
+    );
+
+    const { rows: routineActivities } = await client.query(`
+      SELECT 
+        routine_activities.id AS "routineActivityId", 
+        routine_activities."routineId", 
+        routine_activities."activityId"
+        AS id, 
+        routine_activities.duration, 
+        routine_activities.count, 
+        activities.name, 
+        activities.description
+      FROM 
+        routine_activities 
+      LEFT JOIN 
+        activities 
+      ON 
+        routine_activities."activityId" = activities.id
+    `);
+
+    routines.forEach((routine) => {
+      routine.activities = routineActivities.filter(
+        (routineActivity) => routineActivity.routineId === routine.id
+      );
+    });
+
+    return routines;
+  } catch (error) {
+    console.error("Error getting public routines for user!");
+    throw error;
+  }
+}
+
+async function getPublicRoutinesByActivity({ id }) {
+  try {
+    const routines = await getAllRoutines();
+
+    return routines.filter((routine) => {
+      return (
+        routine.isPublic &&
+        routine.activities.some((activity) => {
+          return id === activity.id;
+        })
+      );
+    });
+  } catch (error) {
+    console.error("Error Finding Routine by Activity");
+    throw error;
+  }
+}
 
 async function updateRoutine({ id, ...fields }) {}
 

@@ -275,9 +275,66 @@ async function getPublicRoutinesByActivity({ id }) {
   }
 }
 
-async function updateRoutine({ id, ...fields }) {}
+async function updateRoutine({ id, ...fields }) {
+  let query = `UPDATE routines SET `;
+  const setFields = [];
+  const values = [id];
+  let i = 2;
 
-async function destroyRoutine(id) {}
+  if (fields.isPublic !== undefined) {
+    setFields.push(`"isPublic" = $${i}`);
+    values.push(fields.isPublic);
+    i += 1;
+  }
+
+  if (fields.name !== undefined) {
+    setFields.push(`name = $${i}`);
+    values.push(fields.name);
+    i += 1;
+  }
+
+  if (fields.goal !== undefined) {
+    setFields.push(`goal = $${i}`);
+    values.push(fields.goal);
+    i += 1;
+  }
+
+  query += setFields.join(", ");
+  query += ` WHERE id = $${1}`;
+
+  await client.query(query, values);
+
+  const {
+    rows: [updatedRoutine],
+  } = await client.query(
+    `
+      SELECT *
+      FROM routines
+      WHERE id = $1;
+    `,
+    [id]
+  );
+
+  return updatedRoutine;
+}
+
+async function destroyRoutine(id) {
+  await client.query(
+    `
+      DELETE FROM routine_activities
+      WHERE "routineId" = $1
+    `,
+    [id]
+  );
+
+  await client.query(
+    `
+      DELETE FROM routines
+      WHERE id = $1
+    `,
+    [id]
+  );
+}
 
 module.exports = {
   getRoutineById,

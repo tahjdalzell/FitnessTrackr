@@ -10,6 +10,7 @@ const {
 const router = express.Router();
 // const { requireUser } = require("./utils");
 const jwt = require("jsonwebtoken");
+const { getAllPublicRoutines } = require("../db");
 
 // POST /api/users/register
 router.post("/register", async (req, res, next) => {
@@ -108,23 +109,19 @@ router.get("/me", async (req, res, next) => {
 });
 // GET /api/users/:username/routines
 
-router.get("/:username/routines", async (req, res, next) => { 
-const username = req.params.username
-let routines;
-  try {
-    if (req.user && req.user.username = username=) {
-      console.log(req.user);
-      console.log(req.params.username);
-      const publicUserRoutines = await getPublicRoutinesByUser(req.user.username);
-      console.log(publicUserRoutines);
-      res.send(publicUserRoutines);
-    } else {
-      const allUserRoutines = await getAllRoutinesByUser(req.user);
-      res.send(allUserRoutines);
-    }
-  } catch (error) {
-    next(error);
+router.get("/:username/routines", async (req, res) => {
+  const username = req.params.username;
+  let routines;
+
+  if (req.user && req.user.username === username) {
+    // Get all routines for the logged in user
+    routines = getAllRoutinesByUser(username);
+  } else {
+    // Get public routines for the specified user
+    routines = getPublicRoutinesByUser(username);
   }
+
+  res.send({ routines });
 });
 
 module.exports = router;

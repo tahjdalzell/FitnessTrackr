@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
+
 // GET /api/activities/:activityId/routines
 
 // GET /api/activities

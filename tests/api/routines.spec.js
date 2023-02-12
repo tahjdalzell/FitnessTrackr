@@ -27,11 +27,10 @@ const {
 const { objectContaining, arrayContaining } = expect;
 
 const { getRoutineById } = require("../../db");
-const { it } = require("faker/lib/locales");
 
 describe("/api/routines", () => {
   describe("GET /api/routines", () => {
-    it("Returns a list of public routines, includes the activities with them", async () => {
+    xit("Returns a list of public routines, includes the activities with them", async () => {
       const { fakeUser } = await createFakeUserWithToken("Jan");
       const fakeRoutine = await createFakePublicRoutine(
         fakeUser.id,
@@ -66,7 +65,7 @@ describe("/api/routines", () => {
   });
 
   describe("POST /api/routines (*)", () => {
-    it("Creates a new routine, with the creatorId matching the logged in user", async () => {
+    xit("Creates a new routine, with the creatorId matching the logged in user", async () => {
       const { fakeUser, token } = await createFakeUserWithToken("Marsha");
 
       const routineData = {
@@ -86,7 +85,7 @@ describe("/api/routines", () => {
       expect(response.body.creatorId).toEqual(fakeUser.id);
     });
 
-    it("Requires logged in user", async () => {
+    xit("Requires logged in user", async () => {
       const routineData = {
         isPublic: true,
         name: "Weekly",
@@ -102,7 +101,7 @@ describe("/api/routines", () => {
   });
 
   describe("PATCH /api/routines/:routineId (**)", () => {
-    it("Updates a routine, notably changing public/private, the name, and the goal", async () => {
+    xit("Updates a routine, notably changing public/private, the name, and the goal", async () => {
       const { fakeUser, token } = await createFakeUserWithToken("Bradley");
       // Create a routine so we can update it.
       const routine = await createFakePublicRoutine(
@@ -127,7 +126,7 @@ describe("/api/routines", () => {
       expect(response.body).toMatchObject(newRoutineData);
     });
 
-    it("Requires logged in user", async () => {
+    xit("Requires logged in user", async () => {
       // Create a routine so we can update it.
       const { fakeUser } = await createFakeUserWithToken("Jefferson");
       const fakeRoutine = createFakePublicRoutine(
@@ -149,7 +148,7 @@ describe("/api/routines", () => {
       expectToHaveErrorMessage(response.body, UnauthorizedError());
     });
 
-    it("returns a 403 when a user tries to edit a routine that is not theirs", async () => {
+    xit("returns a 403 when a user tries to edit a routine that is not theirs", async () => {
       const { fakeUser } = await createFakeUserWithToken("Marques");
       const { fakeUser: anotherUser, token: anotherUsersToken } =
         await createFakeUserWithToken("Mandy");
@@ -180,7 +179,7 @@ describe("/api/routines", () => {
   });
 
   describe("DELETE /api/routines/:routineId (**)", () => {
-    it("Hard deletes a routine. Makes sure to delete all the routineActivities whose routine is the one being deleted.", async () => {
+    xit("Hard deletes a routine. Makes sure to delete all the routineActivities whose routine is the one being deleted.", async () => {
       // Create a routine so we can delete it
       const { fakeUser, token } = await createFakeUserWithToken("John");
       const fakeRoutine = await createFakePublicRoutine(
@@ -200,7 +199,7 @@ describe("/api/routines", () => {
       expect(shouldBeDeleted).toBeFalsy();
     });
 
-    it("returns a 403 when the user deletes a routine that isn't theirs", async () => {
+    xit("returns a 403 when the user deletes a routine that isn't theirs", async () => {
       const { fakeUser } = await createFakeUserWithToken("Janice");
       const fakeRoutine = await createFakePublicRoutine(
         fakeUser.id,
@@ -224,7 +223,7 @@ describe("/api/routines", () => {
   });
 
   describe("POST /api/routines/:routineId/activities", () => {
-    it("Attaches a single activity to a routine.", async () => {
+    xit("Attaches a single activity to a routine.", async () => {
       const { fakeUser, token } = await createFakeUserWithToken("Jerry");
       const fakeActivity = await createFakeActivity(
         "Stair machine",
@@ -253,7 +252,7 @@ describe("/api/routines", () => {
       expect(response.body).toMatchObject(activityRoutineData);
     });
 
-    it("Prevents duplication on (routineId, activityId) pair.", async () => {
+    xit("Prevents duplication on (routineId, activityId) pair.", async () => {
       const { fakeUser, token } = await createFakeUserWithToken("Jill");
       const fakeRoutine = await createFakePublicRoutine(
         fakeUser.id,

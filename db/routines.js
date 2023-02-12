@@ -204,6 +204,7 @@ async function getAllRoutinesByUser({ username }) {
 
 async function getPublicRoutinesByUser({ username }) {
   try {
+    console.log(username);
     const { rows: routines } = await client.query(
       `
       SELECT 
@@ -249,6 +250,7 @@ async function getPublicRoutinesByUser({ username }) {
         (routineActivity) => routineActivity.routineId === routine.id
       );
     });
+    console.log(routines);
 
     return routines;
   } catch (error) {

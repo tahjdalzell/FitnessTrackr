@@ -37,7 +37,7 @@ router.use((req, res, next) => {
 });
 
 // GET /api/health
-router.get("/health", async (req, res, ) => {
+router.get("/health", async (req, res) => {
   res.status(200).send({
     message: "Server is up and healthy",
   });

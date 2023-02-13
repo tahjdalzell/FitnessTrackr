@@ -65,7 +65,7 @@ describe("/api/routines", () => {
   });
 
   describe("POST /api/routines (*)", () => {
-    xit("Creates a new routine, with the creatorId matching the logged in user", async () => {
+    it("Creates a new routine, with the creatorId matching the logged in user", async () => {
       const { fakeUser, token } = await createFakeUserWithToken("Marsha");
 
       const routineData = {
@@ -85,7 +85,7 @@ describe("/api/routines", () => {
       expect(response.body.creatorId).toEqual(fakeUser.id);
     });
 
-    xit("Requires logged in user", async () => {
+    it("Requires logged in user", async () => {
       const routineData = {
         isPublic: true,
         name: "Weekly",
@@ -101,7 +101,7 @@ describe("/api/routines", () => {
   });
 
   describe("PATCH /api/routines/:routineId (**)", () => {
-    xit("Updates a routine, notably changing public/private, the name, and the goal", async () => {
+    it("Updates a routine, notably changing public/private, the name, and the goal", async () => {
       const { fakeUser, token } = await createFakeUserWithToken("Bradley");
       // Create a routine so we can update it.
       const routine = await createFakePublicRoutine(

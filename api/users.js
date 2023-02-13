@@ -1,16 +1,14 @@
 /* eslint-disable no-useless-catch */
 const express = require("express");
 // const { getAllRoutines } = require("../db/routines");
-const {
-  getAllRoutinesByUser,
-  getPublicRoutinesByUser,
-  getUserByUsername,
-  createUser,
-} = require("../db/users");
+const { getUserByUsername, createUser } = require("../db/users");
 const router = express.Router();
 // const { requireUser } = require("./utils");
 const jwt = require("jsonwebtoken");
-const { getAllPublicRoutines } = require("../db");
+const {
+  getPublicRoutinesByUser,
+  getAllRoutinesByUser,
+} = require("../db/routines");
 
 // POST /api/users/register
 router.post("/register", async (req, res, next) => {
@@ -94,7 +92,7 @@ router.get("/me", async (req, res, next) => {
     const token = req.headers.authorization;
 
     if (token) {
-      console.log(req.user);
+      // console.log(req.user);
       res.send(req.user);
     } else {
       res.status(401).send({
@@ -109,19 +107,20 @@ router.get("/me", async (req, res, next) => {
 });
 // GET /api/users/:username/routines
 
-router.get("/:username/routines", async (req, res) => {
-  const username = req.params.username;
-  let routines;
+router.get("/:username/routines", async (req, res, next) => {
+  
+  try {
+    if (req.user.username != req.params.username) {
+      const allPublicRoutines = await getPublicRoutinesByUser(req.params);
 
-  if (req.user && req.user.username === username) {
-    // Get all routines for the logged in user
-    routines = getAllRoutinesByUser(username);
-  } else {
-    // Get public routines for the specified user
-    routines = getPublicRoutinesByUser(username);
+      res.send(allPublicRoutines);
+    } else {
+      const allRoutines = await getAllRoutinesByUser(req.params);
+      res.send(allRoutines);
+    }
+  } catch (error) {
+    next(error);
   }
-
-  res.send({ routines });
 });
 
 module.exports = router;

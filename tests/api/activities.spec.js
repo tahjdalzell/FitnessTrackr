@@ -23,7 +23,6 @@ const { ActivityExistsError, ActivityNotFoundError } = require("../../errors");
 const { arrayContaining } = expect;
 
 const { getPublicRoutinesByActivity } = require("../../db");
-const { it } = require("faker/lib/locales");
 
 describe("/api/activities", () => {
   describe("GET /api/activities", () => {

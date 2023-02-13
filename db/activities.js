@@ -9,6 +9,7 @@ async function createActivity({ name, description }) {
       `
       INSERT INTO activities(name, description) 
       VALUES($1, $2)
+      ON CONFLICT (name) DO NOTHING
       RETURNING *;
     `,
       [name, description]
@@ -17,7 +18,6 @@ async function createActivity({ name, description }) {
     return activities;
   } catch (error) {
     console.log("Error : Failed to create Activity");
-    throw error;
   }
 }
 
@@ -30,8 +30,7 @@ async function getAllActivities() {
     );
     return activities;
   } catch (error) {
-    console.error("Error retrieving all activities!");
-    throw error;
+    console.error("Error retrieving all activities!", error);
   }
 }
 

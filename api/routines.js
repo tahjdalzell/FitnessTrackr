@@ -60,7 +60,7 @@ router.patch("/:routineId", requireUser, async (req, res, next) => {
     const routine = await getRoutineById(id);
     console.log(routine);
     if (routine.creatorId !== userId) {
-      res.status(403);
+      res.status(403);  
       next({
         error: "ERROR 403",
         name: "CAN EDIT",

@@ -58,6 +58,7 @@ router.delete("/:routineActivityId", requireUser, async (req, res, next) => {
     } else {
       await destroyRoutineActivity(id);
       res.send({ success: true, ...editRA });
+      console.log("api", id);
     }
   } catch (error) {
     next(error);

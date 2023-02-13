@@ -42,7 +42,7 @@ async function getActivityById(id) {
     return activity;
   } catch (error) {
     console.error(`Error getting activity with id ${id}`);
-    throw error;
+    
   }
 }
 

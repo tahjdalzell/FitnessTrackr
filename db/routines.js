@@ -22,7 +22,7 @@ async function getRoutineById(id) {
   try {
     const {
       rows: [routine],
-    } = await client.query(`SELECT * FROM routines WHERE id = $1;`[id]);
+    } = await client.query(`SELECT * FROM routines WHERE id = $1;`, [id]);
     return routine;
   } catch (error) {
     console.error("Error getting Routine by Id");
@@ -250,7 +250,7 @@ async function getPublicRoutinesByUser({ username }) {
         (routineActivity) => routineActivity.routineId === routine.id
       );
     });
-    console.log(routines);
+    // console.log(routines);
 
     return routines;
   } catch (error) {

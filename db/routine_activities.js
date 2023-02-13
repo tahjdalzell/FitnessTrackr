@@ -21,7 +21,6 @@ async function addActivityToRoutine({
     return routineActivities;
   } catch (error) {
     console.error("Error adding activity to routine!");
-    throw error;
   }
 }
 
@@ -66,7 +65,7 @@ async function getRoutineActivitiesByRoutine({ id }) {
 async function updateRoutineActivity({ id, ...fields }) {
   try {
     const setFields = Object.entries(fields)
-      .map(([key, ], index) => `${key} = $${index + 2}`)
+      .map(([key], index) => `${key} = $${index + 2}`)
       .join(", ");
     const {
       rows: [updatedRoutineActivity],
@@ -103,7 +102,7 @@ async function canEditRoutineActivity(routineActivityId, userId) {
       routineActivityId,
     ]);
     // Assuming that a routine activity is editable if the user who created it is the same as the user who wants to edit it.
-     const canEdit = routineActivity.id === userId;
+    const canEdit = routineActivity.id === userId;
     return canEdit;
   } catch (error) {
     console.error("Error Editing Routine Activity");
